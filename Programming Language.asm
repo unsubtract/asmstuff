@@ -22,14 +22,14 @@ _start:
     xor eax, eax ; SYS_read
     xor edi, edi ; stdin
     mov rsi, rsp
-    mov edx, program_sz+1
+    mov edx, program_sz+1 ; read an extra byte to detect if input is too long
     syscall
     
     cmp eax, program_sz
     jne exit
 
     xor edx, edx
-    program_cmp:
+program_cmp:
     movzx eax, byte [program+rdx]
     cmp al, byte [rsp+rdx]
     jne exit
