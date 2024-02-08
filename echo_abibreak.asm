@@ -23,7 +23,7 @@ _start:
     mov rsi, rsp ; if no arguments are passed, point to stack
     cmp rbp, 1
     cmovg rsi, [rsp+8] ; otherwise point to argv[1]
-    cmovle edx, ebp ; ensure edx >= 1 when jumping to print
+    setle dl ; ensure edx >= 1 when jumping to print
 
 arg_loop:
     sub ebp, 1
