@@ -4,8 +4,8 @@
 ; x86_64 Linux, argument strings are contiguous in memory, allowing the code to
 ; be more optimized (no copying memory and a singular call to write(2)).
 ;
-; This behavior is not guaranteed by the ABI or any other standard so this code
-; could break at any point in the future, but it's fun regardless.
+; This behavior is not guaranteed by the SysV ABI or any other standard so this
+; program could break at any point in the future, but it's fun regardless.
 
 BITS 64
 

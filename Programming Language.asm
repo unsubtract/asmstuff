@@ -1,5 +1,10 @@
 ; Programming Language.asm - see https://esolangs.org/wiki/Programming_Language
-; Reads binary data on stdin
+;
+; Input is treated as binary instead of text, in other words the file cannot
+; contain any EOL bytes (LF or CR). Because the output must always be the same
+; as the input, the output deliberately omits any newline.
+;
+; Input is always read from stdin
 
 BITS 64
 

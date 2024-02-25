@@ -1,4 +1,4 @@
-; stackdump.asm - dump memory under stack to stdout (until a segfault)
+; stackdump.asm - dump memory under stack to stdout (until a segfault occurs)
 ; used to assist in making echo_abibreak.asm
 
 BITS 64

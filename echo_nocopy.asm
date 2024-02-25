@@ -1,10 +1,10 @@
 ; echo_nocopy.asm - write command line argument strings to output
 ;
-; This implementation computes the length of the argument string, inserts a
-; space at the end and then calls write(2), repeating for each argument.
+; This implementation computes the length of the argument string, swaps the
+; null char for a space and then calls write(2), repeating for each string.
 ;
-; This can be considered a naive appraoch because the syscalls could be
-; more expensive than copying on long inputs.
+; This can be considered a naive appraoch because syscalls could be more
+; expensive than copying on long inputs.
 
 BITS 64
 
