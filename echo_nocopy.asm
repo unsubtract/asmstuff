@@ -8,8 +8,6 @@
 
 BITS 64
 
-stdout equ 1
-SYS_write equ 1
 SYS_exit equ 60
 
 section .text
@@ -17,26 +15,26 @@ global _start
 
 _start:
     pop rbp ; argc
-    mov ebx, 1 ; argument counter
+    mov edi, 1 ; passed to write() and also used instead of immediate 0x1
+    mov ebx, edi ; argument counter
     jmp check
 
 arg_loop:
     mov rsi, [rsp+rbx*8]
 strlen_loop:
-    cmp byte [rsi+rdx], 0
-    lea edx, [edx+1] ; use lea to avoid setting flags
+    add edx, edi ; 0x1
+    cmp byte [rsi+rdx-1], 0
     jne strlen_loop
 
     mov [rsi+rdx-1], byte ' '
 
-    add ebx, 1
+    add ebx, edi ; 0x1
     cmp ebx, ebp
     jl space
-    sub edx, 1
+    sub edx, edi ; 0x1
     space:
 
-    mov eax, SYS_write
-    mov edi, stdout
+    mov eax, edi ; SYS_write
     syscall
 check:
     xor edx, edx ; character counter
@@ -44,9 +42,8 @@ check:
     jl arg_loop
 
 exit:
-    mov eax, SYS_write
-    mov edi, stdout
-    mov edx, 1
+    mov eax, edi ; SYS_write
+    mov edx, edi ; 0x1
     mov rsi, rsp
     mov [rsp], byte `\n`
     syscall

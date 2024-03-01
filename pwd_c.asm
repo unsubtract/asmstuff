@@ -6,8 +6,6 @@
 
 BITS 64
 
-stdout equ 1
-SYS_write equ 1
 SYS_exit equ 60
 SYS_getcwd equ 79
 
@@ -17,26 +15,26 @@ section .text
 global _start
 
 _start:
-    sub rsp, bufsize
+    mov esi, bufsize
+    sub rsp, rsi
     mov eax, SYS_getcwd
     mov rdi, rsp
-    mov esi, bufsize
     syscall
 
+    mov edi, 1 ; stdout and/or EXIT_FAILURE
     test eax, eax
-    jle fail
+    jle end
 
     xor edx, edx
 length_loop:
     movzx eax, byte [rsp+rdx]
-    add edx, 1
+    add edx, edi ; 0x1
     test eax, eax
     jne length_loop
 
     mov byte [rsp+rdx-1], `\n` ; swap \0 for newline
 
-    mov eax, SYS_write
-    mov edi, stdout
+    mov eax, edi ; SYS_write
     mov rsi, rsp
     ; edx passed as-is
     syscall
@@ -45,7 +43,3 @@ length_loop:
 end:
     mov eax, SYS_exit
     syscall
-
-fail:
-    mov edi, 1
-    jmp end

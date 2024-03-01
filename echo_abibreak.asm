@@ -9,8 +9,6 @@
 
 BITS 64
 
-stdout equ 1
-SYS_write equ 1
 SYS_exit equ 60
 
 section .text
@@ -19,31 +17,30 @@ global _start
 _start:
     pop rbp ; argc
     xor edx, edx ; character counter
+    mov edi, 1 ; passed to write() and also used instead of immediate 0x1
 
     mov rsi, rsp ; if no arguments are passed, point to stack
-    cmp rbp, 1
+    cmp ebp, edi ; 0x1
     cmovg rsi, [rsp+8] ; otherwise point to argv[1]
-    setle dl ; ensure edx >= 1 when jumping to print
+    cmovle edx, edi ; ensure edx >= 1 when jumping to print
 
 arg_loop:
-    sub ebp, 1
+    sub ebp, edi ; 0x1
     jle print
 char_loop:
-    cmp byte [rsi+rdx], 0
-    lea edx, [edx+1] ; use lea to avoid setting flags
+    add edx, edi ; 0x1
+    cmp byte [rsi+rdx-1], 0
     jnz char_loop
     mov [rsi+rdx-1], byte ' '
     jmp arg_loop
 
 print:
     mov [rsi+rdx-1], byte `\n`
-    mov edi, stdout
-    mov eax, SYS_write
+    ; stdout already in edi
+    mov eax, edi ; SYS_write
     syscall
 
 exit:
     mov eax, SYS_exit
     xor edi, edi
     syscall
-    nop ; increase the text section to 69 bytes at the request of peers
-    nop

@@ -8,10 +8,6 @@
 
 BITS 64
 
-stdout equ 1
-stdin equ 0
-SYS_read equ 0
-SYS_write equ 1
 SYS_exit equ 60
 
 section .rodata
@@ -23,27 +19,27 @@ section .text
 global _start
 
 _start:
-    sub rsp, program_sz+1
+    mov edx, program_sz+1 ; read an extra byte to detect if input is too long
+    sub rsp, rdx
     xor eax, eax ; SYS_read
     xor edi, edi ; stdin
     mov rsi, rsp
-    mov edx, program_sz+1 ; read an extra byte to detect if input is too long
     syscall
     
     cmp eax, program_sz
     jne exit
 
+    mov edi, 1 ; stdout
     xor edx, edx
 program_cmp:
-    movzx eax, byte [program+rdx]
-    cmp al, byte [rsp+rdx]
+    movzx ebx, byte [program+rdx]
+    cmp byte [rsp+rdx], bl
     jne exit
-    add edx, 1
-    cmp edx, program_sz
+    add edx, edi ; 0x1
+    cmp edx, eax ; program_sz
     jl program_cmp
 
-    mov eax, SYS_write
-    mov edi, stdout
+    mov eax, edi ; SYS_write
     mov rsi, program
     syscall
 
