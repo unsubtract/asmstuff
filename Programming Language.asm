@@ -29,18 +29,18 @@ _start:
     cmp eax, program_sz
     jne exit
 
-    mov edi, 1 ; stdout
-    xor edx, edx
+    mov edi, 1 ; stdout, passed to write()
+    mov rsi, program ; also passed to write
+    mov edx, eax ;     ^
+
 program_cmp:
-    movzx ebx, byte [program+rdx]
-    cmp byte [rsp+rdx], bl
+    movzx ebx, byte [rsi+rax]
+    cmp bl, byte [rsp+rax]
     jne exit
-    add edx, edi ; 0x1
-    cmp edx, eax ; program_sz
-    jl program_cmp
+    sub eax, edi ; 0x1
+    jge program_cmp
 
     mov eax, edi ; SYS_write
-    mov rsi, program
     syscall
 
 exit:
